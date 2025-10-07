@@ -13,14 +13,29 @@
         <h1>GeoSignal Parser</h1>
 
         <div class="input-section">
-            <h2>Upload Signal File</h2>
+            <h2>Option 1: Upload File</h2>
             <input type="file" id="fileInput" accept=".sff,.fbf">
-            <button id="processBtn">Process and Plot</button>
+            <button id="processFileBtn">Process File</button>
+        </div>
+
+        <div class="input-section">
+            <h2>Option 2: Paste Hex Data</h2>
+            <textarea id="hexInput" rows="5" placeholder="e.g., 2020000000000000a46935001e8d93ff..."></textarea>
+            <button id="processHexBtn">Process Hex</button>
+        </div>
+
+        <div class="controls">
+             <button id="clearBtn">Clear Map</button>
         </div>
 
         <div class="results-section">
             <h2>Results</h2>
+            <p><strong>Signal Type(s) Found:</strong> <span id="signalType">N/A</span></p>
             <div id="results">No data processed yet.</div>
+            <div id="coordinates-list-container">
+                <h3>Coordinates:</h3>
+                <ul id="coordinates-list"></ul>
+            </div>
         </div>
 
         <div id="map"></div>

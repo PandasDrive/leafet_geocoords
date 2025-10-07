@@ -9,16 +9,43 @@ app = Flask(__name__, static_folder='frontend', static_url_path='')
 PARSERS = {
     0x2020: SignalAParser(),
     0x2021: SignalBParser(),
-    # To add a new signal type, just add a new entry here
-    # e.g., 0x2022: SignalCParser(),
 }
+
+def parse_binary_data(data):
+    """Parses a byte string for signal data and returns a list of coordinates."""
+    coordinates = []
+    # Process the file in 16-byte chunks
+    for i in range(0, len(data), 16):
+        chunk = data[i:i+16]
+        if len(chunk) < 16:
+            continue # Skip incomplete chunks
+
+        # Read the sync word (first 2 bytes, big-endian)
+        sync_word = struct.unpack('>H', chunk[0:2])[0]
+
+        # Find the appropriate parser for the sync word
+        parser = PARSERS.get(sync_word)
+        
+        if parser:
+            try:
+                parsed_data = parser.parse(chunk)
+                coordinates.append(parsed_data)
+            except (struct.error, IndexError):
+                # Handle cases where a chunk might be malformed for its type
+                print(f"Skipping malformed chunk for sync word {hex(sync_word)}")
+                continue
+        else:
+            # Handle unknown signal type
+            print(f"Unknown signal type with sync word: {hex(sync_word)}")
+
+    return coordinates
 
 @app.route('/')
 def serve_index():
     return send_from_directory(app.static_folder, 'index.html')
 
-@app.route('/process_data', methods=['POST'])
-def process_data():
+@app.route('/process_file', methods=['POST'])
+def process_file():
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
     
@@ -29,37 +56,36 @@ def process_data():
 
     try:
         file_content = file.read()
-        coordinates = []
-        
-        # Process the file in 16-byte chunks
-        for i in range(0, len(file_content), 16):
-            chunk = file_content[i:i+16]
-            if len(chunk) < 16:
-                continue # Skip incomplete chunks
-
-            # Read the sync word (first 2 bytes, big-endian)
-            sync_word = struct.unpack('>H', chunk[0:2])[0]
-
-            # Find the appropriate parser for the sync word
-            parser = PARSERS.get(sync_word)
-            
-            if parser:
-                try:
-                    data = parser.parse(chunk)
-                    coordinates.append(data)
-                except (struct.error, IndexError):
-                    # Handle cases where a chunk might be malformed for its type
-                    print(f"Skipping malformed chunk for sync word {hex(sync_word)}")
-                    continue
-            else:
-                # Handle unknown signal type
-                print(f"Unknown signal type with sync word: {hex(sync_word)}")
+        coordinates = parse_binary_data(file_content)
 
         if not coordinates:
             return jsonify({"error": "No valid data points found in the file."}), 400
 
         return jsonify(coordinates)
 
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+@app.route('/process_hex', methods=['POST'])
+def process_hex():
+    hex_string = request.form.get('hex_data')
+    if not hex_string:
+        return jsonify({"error": "No hex data provided."}), 400
+
+    try:
+        # Clean up the hex string (remove spaces, newlines, etc.)
+        hex_string = ''.join(hex_string.split())
+        # Convert hex string to bytes
+        byte_data = bytes.fromhex(hex_string)
+        
+        coordinates = parse_binary_data(byte_data)
+
+        if not coordinates:
+            return jsonify({"error": "No valid data points found in the hex string."}), 400
+
+        return jsonify(coordinates)
+    except ValueError:
+        return jsonify({"error": "Invalid hex string format."}), 400
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
