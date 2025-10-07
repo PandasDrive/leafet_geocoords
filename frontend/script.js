@@ -12,23 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('loader');
 
     // --- Splash Screen Logic ---
-    // Hide the main container initially
-    mainContainer.style.display = 'none';
-
     // After a delay, fade out the splash screen and fade in the main content
     setTimeout(() => {
-        splashScreen.style.opacity = '0';
-        // Use a second timeout to set display to 'none' after the fade-out transition
-        setTimeout(() => {
-            splashScreen.style.display = 'none';
-            mainContainer.style.display = 'block';
-        }, 1000); // This should match the transition duration in the CSS
-    }, 2500); // Total time the splash screen is visible
+        if (splashScreen) {
+            splashScreen.classList.add('hidden');
+        }
+        if (mainContainer) {
+            mainContainer.classList.remove('content-hidden');
+        }
+    }, 2500); // Time for the animation to play
 
     // --- Map Initialization ---
     const map = L.map('map').setView([20, 0], 2);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    // To use this application offline, you must host your own map tiles.
+    // The URL below is a placeholder for your local tile server.
+    // You should place your tiles in a directory (e.g., 'tiles') and update the path accordingly.
+    // Example for tiles at the root of the server: '/tiles/{z}/{x}/{y}.png'
+    L.tileLayer('./tiles/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; Your Local Source',
+        maxZoom: 18,
     }).addTo(map);
 
     let plottedLayers = [];

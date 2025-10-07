@@ -44,6 +44,13 @@ def parse_binary_data(data):
 def serve_index():
     return send_from_directory(app.static_folder, 'index.html')
 
+@app.route('/tiles/<int:z>/<int:x>/<int:y>.png')
+def serve_tile(z, x, y):
+    """Serve map tiles from the local 'tiles' directory."""
+    # The 'tiles' directory should be inside the 'frontend' directory.
+    tile_path = os.path.join(app.static_folder, 'tiles', str(z), str(x))
+    return send_from_directory(tile_path, f'{y}.png')
+
 @app.route('/process_file', methods=['POST'])
 def process_file():
     if 'file' not in request.files:

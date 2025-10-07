@@ -85,6 +85,64 @@ body {
     50% { transform: scaleY(1); }
 }
 
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 1px,
+        transparent 6px
+    );
+    z-index: -2; /* Place it behind the content */
+    animation: scanline 10s linear infinite;
+}
+
+.globe::before, .globe::after {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: -20px;
+    right: -20px;
+    bottom: -20px;
+    border: 2px solid #00aaff;
+    border-radius: 50%;
+    animation: pulse-ring 1.5s linear infinite;
+    opacity: 0;
+}
+
+.globe::after {
+    animation-delay: 0.75s; /* Start the second ring halfway through the first's animation */
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes scanline {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 100px 100px;
+    }
+}
+
 h1 {
     text-align: center;
     color: #e0e0e0;
@@ -96,11 +154,12 @@ h1 {
     width: 100%;
     margin: 2rem auto;
     padding: 2rem;
-    background: rgba(20, 20, 40, 0.6);
+    /* Glassmorphism effect */
+    background: rgba(20, 20, 40, 0.6); /* Slightly darker, more purple tint */
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
