@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const splashScreen = document.getElementById('splash-screen');
+    const mainContainer = document.querySelector('.container');
     const fileInput = document.getElementById('fileInput');
     const processFileBtn = document.getElementById('processFileBtn');
     const hexInput = document.getElementById('hexInput');
@@ -9,6 +11,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const coordinatesList = document.getElementById('coordinates-list');
     const loader = document.getElementById('loader');
 
+    // --- Splash Screen Logic ---
+    // Hide the main container initially
+    mainContainer.style.display = 'none';
+
+    // After a delay, fade out the splash screen and fade in the main content
+    setTimeout(() => {
+        splashScreen.style.opacity = '0';
+        // Use a second timeout to set display to 'none' after the fade-out transition
+        setTimeout(() => {
+            splashScreen.style.display = 'none';
+            mainContainer.style.display = 'block';
+        }, 1000); // This should match the transition duration in the CSS
+    }, 2500); // Total time the splash screen is visible
+
+    // --- Map Initialization ---
     const map = L.map('map').setView([20, 0], 2);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -16,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let plottedLayers = [];
 
+    // --- UI Functions ---
     function clearMap() {
         plottedLayers.forEach(layer => map.removeLayer(layer));
         plottedLayers = [];
@@ -24,10 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
         coordinatesList.innerHTML = '';
         fileInput.value = '';
         hexInput.value = '';
-        map.setView([20, 0], 2);
+        map.setView([20, 0], 2); // Reset map view
     }
 
     function processAndDisplayData(data) {
+        clearMap(); // Clear previous results before adding new ones
+
         if (data.error) {
             resultsDiv.textContent = `Error: ${data.error}`;
             signalTypeSpan.textContent = 'Error';
@@ -113,12 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             resultsDiv.textContent = `Error: ${error.message}`;
             signalTypeSpan.textContent = 'Error';
-            console.error('Error processing file:', error);
+            console.error('Error processing data:', error);
         } finally {
             loader.classList.add('hidden');
         }
     }
 
+    // --- Event Listeners ---
     processFileBtn.addEventListener('click', () => {
         const file = fileInput.files[0];
         if (!file) {
