@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('fileInput');
     const processFileBtn = document.getElementById('processFileBtn');
@@ -8,13 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsDiv = document.getElementById('results');
     const signalTypeSpan = document.getElementById('signalType');
     const coordinatesList = document.getElementById('coordinates-list');
+    const loader = document.getElementById('loader');
 
     const map = L.map('map').setView([20, 0], 2);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    let plottedLayers = []; // Will hold all markers and layers to be cleared
+    let plottedLayers = [];
 
     function clearMap() {
         plottedLayers.forEach(layer => map.removeLayer(layer));
@@ -24,12 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
         coordinatesList.innerHTML = '';
         fileInput.value = '';
         hexInput.value = '';
-        map.setView([20, 0], 2); // Reset map view
+        map.setView([20, 0], 2);
     }
 
     function processAndDisplayData(data) {
-        clearMap(); // Clear previous results before adding new ones
-
         if (data.error) {
             resultsDiv.textContent = `Error: ${data.error}`;
             signalTypeSpan.textContent = 'Error';
@@ -47,14 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!signalTypes[point.type]) {
                 signalTypes[point.type] = [];
             }
-            signalTypes[point.type].push(point); // Store the whole point object
+            signalTypes[point.type].push(point);
         });
 
         const detectedTypes = Object.keys(signalTypes);
-        signalTypeSpan.textContent = detectedTypes.join(', ') || 'None';
+        signalTypeSpan.textContent = detectedTypes.join(', ');
 
         const allPoints = [];
-        const colors = { 'A': 'blue', 'B': 'red' }; // Define colors per type
+        const colors = { 'A': 'blue', 'B': 'red' };
 
         for (const type in signalTypes) {
             const points = signalTypes[type];
@@ -70,7 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         opacity: 1,
                         fillOpacity: 0.8
                     }).addTo(map);
+                    
+                    marker.bindTooltip(`Lat: ${point.lat.toFixed(5)}, Lng: ${point.lng.toFixed(5)}`);
                     marker.bindPopup(`<b>Signal ${type}</b><br>Lat: ${point.lat.toFixed(5)}<br>Lng: ${point.lng.toFixed(5)}`);
+                    
                     plottedLayers.push(marker);
                 });
             }
@@ -93,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleDataProcessing(url, body) {
         resultsDiv.textContent = 'Processing...';
         signalTypeSpan.textContent = 'Detecting...';
-        
+        loader.classList.remove('hidden');
+
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -111,7 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             resultsDiv.textContent = `Error: ${error.message}`;
             signalTypeSpan.textContent = 'Error';
-            console.error('Error processing data:', error);
+            console.error('Error processing file:', error);
+        } finally {
+            loader.classList.add('hidden');
         }
     }
 

@@ -20,7 +20,7 @@
 
         <div class="input-section">
             <h2>Option 2: Paste Hex Data</h2>
-            <textarea id="hexInput" rows="5" placeholder="e.g., 2020000000000000a46935001e8d93ff..."></textarea>
+            <textarea id="hexInput" rows="5" placeholder="e.g., 2020000000000000205216001e8d93ff..."></textarea>
             <button id="processHexBtn">Process Hex</button>
         </div>
 
@@ -38,7 +38,10 @@
             </div>
         </div>
 
-        <div id="map"></div>
+        <div id="map-container">
+            <div id="map"></div>
+            <div id="loader" class="hidden"></div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
