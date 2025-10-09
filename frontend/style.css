@@ -32,8 +32,8 @@ body {
 }
 
 .globe {
-    width: 150px;
-    height: 150px;
+    width: 350px;
+    height: 350px;
     border-radius: 50%;
     background: radial-gradient(circle at 30% 30%, #87CEEB, #007bff);
     box-shadow: 0 0 30px #007bff, inset 0 0 20px rgba(0,0,0,0.5);
@@ -49,21 +49,22 @@ body {
     align-items: center;
     justify-content: space-between;
     opacity: 0.7;
-    animation: zoomIn 2s ease-out forwards, pulseWave 1.5s ease-in-out infinite;
+    animation: zoomIn .8s ease-out forwards, pulseWave 1.5s ease-in-out infinite;
 }
 
 .waveform .bar {
     width: 8px;
     height: 100%;
-    background-color: #00aaff;
+    background-color: #25dec5;
     border-radius: 4px;
-    animation: wave 1.5s infinite ease-in-out;
+    animation: wave 1s infinite ease-in-out, color-cycle 1s infinite linear alternate;
 }
 
 .waveform .bar:nth-child(2) { animation-delay: 0.1s; }
 .waveform .bar:nth-child(3) { animation-delay: 0.2s; }
 .waveform .bar:nth-child(4) { animation-delay: 0.3s; }
 .waveform .bar:nth-child(5) { animation-delay: 0.4s; }
+.waveform .bar:nth-child(6) { animation-delay: 0.5s; }
 
 @keyframes spin {
     from { background-position: 0% 50%; }
@@ -129,7 +130,7 @@ body::after {
         opacity: 0.8;
     }
     100% {
-        transform: scale(1.5);
+        transform: scale(2.75);
         opacity: 0;
     }
 }
@@ -443,4 +444,20 @@ button:hover {
     100% {
         left: 100%;
     }
+}
+
+@keyframes color-cycle {
+    0% {
+        background-color: #25dec5;
+    }
+    30% {
+        background-color: #38ff70;
+    }
+    60% {
+        background-color: #17b1aa;
+
+    }
+    100% {
+        background-color: #4dff00;
+    }   
 }
