@@ -10,6 +10,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const signalTypeSpan = document.getElementById('signalType');
     const coordinatesList = document.getElementById('coordinates-list');
     const loader = document.getElementById('loader');
+    const modal = document.getElementById('help-modal');
+    const helpText = document.getElementById('help-text');
+    const closeButton = document.querySelector('.close-button');
+
+    const helpContent = {
+        'help-file': 'Upload a .sff or .fbf file containing signal data. The file will be processed to extract and display geographical coordinates.',
+        'help-hex': 'Paste the hexadecimal representation of the signal data here. This is an alternative to uploading a file.'
+    };
+
+    document.querySelectorAll('.help-icon').forEach(icon => {
+        icon.addEventListener('click', () => {
+            const helpKey = icon.getAttribute('data-help');
+            helpText.textContent = helpContent[helpKey];
+            modal.style.display = 'block';
+        });
+    });
+
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
 
     // --- Splash Screen Logic ---
     // After a delay, fade out the splash screen and fade in the main content

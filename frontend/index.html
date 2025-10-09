@@ -20,17 +20,31 @@
     </div>
     </div>
 
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p id="help-text"></p>
+        </div>
+    </div>
+
     <div class="container content-hidden">
+        <header>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/faq">FAQ</a>
+            </nav>
+        </header>
         <h1>GeoSignal Parser</h1>
 
         <div class="input-section">
-            <h2>Option 1: Upload File</h2>
+            <h2>Option 1: Upload File <span class="help-icon" data-help="help-file">?</span></h2>
             <input type="file" id="fileInput" accept=".sff,.fbf">
             <button id="processFileBtn">Process File</button>
         </div>
 
         <div class="input-section">
-            <h2>Option 2: Paste Hex Data</h2>
+            <h2>Option 2: Paste Hex Data <span class="help-icon" data-help="help-hex">?</span></h2>
             <textarea id="hexInput" rows="5" placeholder="e.g., 2020000000000000205216001e8d93ff..."></textarea>
             <button id="processHexBtn">Process Hex</button>
         </div>

@@ -96,5 +96,14 @@ def process_hex():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
+
+@app.route('/about')
+def serve_about():
+    return send_from_directory(app.static_folder, 'about.html')
+
+@app.route('/faq')
+def serve_faq():
+    return send_from_directory(app.static_folder, 'faq.html')
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

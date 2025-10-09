@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - GeoSignal Parser</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #1a1a2e;
+            background: linear-gradient(to right, #16213e, #0f3460, #1a1a2e);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(20, 20, 40, 0.6);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px) saturate(120%);
+            -webkit-backdrop-filter: blur(10px) saturate(120%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .faq-item {
+            margin-bottom: 1.5rem;
+        }
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Frequently Asked Questions</h1>
+        <div class="faq-item">
+            <h2>What are .fbf and .sff files?</h2>
+            <p>They are custom binary formats used to store signal data containing geographical coordinates.</p>
+        </div>
+        <div class="faq-item">
+            <h2>What is hex data?</h2>
+            <p>It's a representation of the binary data from the files. You can copy the content of a file as a hex string and paste it here. Ensure it is not an odd number of Hex Fields</p>
+        </div>
+        <div class="How much can I put in?">
+            <h2>How much data can I process at once?</h2>
+            <p>The application can handle reasonably sized files and hex strings, but performance may degrade with very large inputs Not recommend over 1000 lines of hex fields.</p>
+        </div>
+        <div class="What signals are supported?">
+            <h2>What signals are supported?</h2>
+            <p>Currently, the application supports XXX formats that include geographical coordinates. More formats may be added in future updates.</p>
+        <div class="faq-item">
+            <h2>Why do I need a local tile server for the map?</h2>
+            <p>To use the application completely offline. The application is configured to look for map tiles locally. You can obtain map tiles from sources like OpenStreetMap and host them with a simple local server.</p>
+        </div>
+        <br>
+        <p><a href="/">Back to Parser</a></p>
+    </div>
+</body>
+</html>
