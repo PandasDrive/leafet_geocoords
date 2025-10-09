@@ -6,41 +6,78 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     console.log("Ohhh so we are peeking under the hood, are we? Welcome, fellow signal enthusiast!");
 
-        // --- Konami Code Logic ---
-    const konamiCode = [
-        'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
-        'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
-        'b', 'a'
-    ];
+    // --- Easter Egg Codes ---
+    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
     let konamiIndex = 0;
+    
+    const godModeCode = ['i', 'd', 'd', 'q', 'd'];
+    let godModeIndex = 0;
 
     document.addEventListener('keyup', (event) => {
+        // Konami Code Logic
         if (event.key === konamiCode[konamiIndex]) {
             konamiIndex++;
             if (konamiIndex === konamiCode.length) {
-                konamiIndex = 0; // Reset for next time
+                konamiIndex = 0;
                 launchRocket();
             }
         } else {
-            konamiIndex = 0; // Reset if the sequence is broken
+            konamiIndex = 0;
+        }
+
+        // God Mode Logic
+        if (event.key === godModeCode[godModeIndex]) {
+            godModeIndex++;
+            if (godModeIndex === godModeCode.length) {
+                godModeIndex = 0;
+                activateGodMode();
+            }
+        } else {
+            godModeIndex = 0;
         }
     });
 
     function launchRocket() {
-        // Prevent launching multiple rockets at once
-        if (document.querySelector('.konami-rocket')) {
-            return;
-        }
+        if (document.querySelector('.konami-rocket')) return;
         const rocket = document.createElement('div');
         rocket.textContent = '🚀';
         rocket.className = 'konami-rocket';
         document.body.appendChild(rocket);
-
-        // Clean up the rocket from the DOM after the animation is done
-        setTimeout(() => {
-            rocket.remove();
-        }, 4000); // Duration matches the animation in style.css
+        setTimeout(() => rocket.remove(), 4000);
     }
+
+    function activateGodMode() {
+        const godModeText = document.getElementById('god-mode-text');
+        const elementsToGlow = document.querySelectorAll('.container, button, .help-icon');
+        
+        // Flash the text
+        if(godModeText) {
+            godModeText.classList.remove('hidden');
+            godModeText.classList.add('god-mode-text-active');
+        }
+
+        elementsToGlow.forEach(el => {
+            el.classList.add('god-mode-glow');
+        });
+
+        // Remove the effect after the animation finishes
+        // Increased timeout to 4000ms (4 seconds)
+        setTimeout(() => {
+            if(godModeText) {
+                godModeText.classList.add('hidden');
+                godModeText.classList.remove('god-mode-text-active');
+            }
+            elementsToGlow.forEach(el => {
+                el.classList.remove('god-mode-glow');
+            });
+        }, 4000); // This now matches the new animation duration
+    }
+
+    // --- Dynamic Title variables ---
+    const originalTitle = document.title;
+    let titleTimeout;
+
+
     // --- Element References ---
 
     const splashScreen = document.getElementById('splash-screen');

@@ -511,3 +511,60 @@ button:hover {
     25% { transform: rotate(-20deg); }
     75% { transform: rotate(20deg); }
 }
+
+/* --- God Mode Easter Egg --- */
+.god-mode-glow {
+    /* Runs the animation twice, alternating direction */
+    animation: god-mode-flash 1s ease-in-out 2;
+}
+
+@keyframes god-mode-flash {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(0, 191, 255, 0.4); /* Normal glow */
+    }
+    50% {
+        box-shadow: 0 0 30px 10px #25e678; /* Intense yellow glow */
+    }
+}
+
+/* --- God Mode Text --- */
+#god-mode-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    /* New styles for the box */
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 2rem 3rem;
+    border-radius: 12px;
+    border: 1px solid #2bdf85;
+    box-shadow: 0 0 20px #18a6ff;
+    text-align: center;
+
+    /* Original text styles */
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d838be;
+    text-shadow: 0 0 15px #52a961;
+    z-index: 10002;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.god-mode-text-active {
+    /* Increased duration */
+    animation: text-flash 4s ease-in-out;
+}
+
+@keyframes text-flash {
+    /* Adjusted keyframes for a longer hold */
+    0%, 100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    10%, 80% { /* Text is visible from 10% to 80% of the animation */
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
