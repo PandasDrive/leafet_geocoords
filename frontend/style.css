@@ -412,3 +412,35 @@ button:hover {
     text-decoration: none;
     cursor: pointer;
 }
+/* --- Running Banner Styles --- */
+#running-banner {
+    position: fixed;
+    top: 10%; /* Moved it down a bit from the top edge */
+    left: -100%; /* Start off-screen */
+    width: auto;
+    white-space: nowrap;
+    padding: 10px 25px;
+    background: rgba(15, 52, 96, 0.8); /* Matching blue from your gradient */
+    color: #e0e0e0; /* Matching light text color */
+    font-weight: bold;
+    border-radius: 8px;
+    z-index: 10000; /* Ensure it's on top of the splash screen */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(88, 166, 255, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.animate-banner {
+    /* Slower animation duration (7 seconds) */
+    animation: run-across 7s linear forwards;
+}
+
+@keyframes run-across {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}

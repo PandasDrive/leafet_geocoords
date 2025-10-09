@@ -14,7 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const helpText = document.getElementById('help-text');
     const closeButton = document.querySelector('.close-button');
     const exportCsvBtn = document.getElementById('exportCsvBtn');
-    let processedData = []; // Variable to store the processed data
+    let processedData = [];
+
+    // --- Elements for the Home link feature ---
+    const homeLink = document.getElementById('homeLink');
+    const runningBanner = document.getElementById('running-banner');
 
     const helpContent = {
         'help-file': 'Upload a .sff or .fbf file containing signal data. The file will be processed to extract and display geographical coordinates.',
@@ -40,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Splash Screen Logic ---
-    // After a delay, fade out the splash screen and fade in the main content
     setTimeout(() => {
         if (splashScreen) {
             splashScreen.classList.add('hidden');
@@ -48,14 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mainContainer) {
             mainContainer.classList.remove('content-hidden');
         }
-    }, 2500); // Time for the animation to play
+    }, 2500);
 
     // --- Map Initialization ---
     const map = L.map('map').setView([20, 0], 2);
-    // To use this application offline, you must host your own map tiles.
-    // The URL below is a placeholder for your local tile server.
-    // You should place your tiles in a directory (e.g., 'tiles') and update the path accordingly.
-    // Example for tiles at the root of the server: '/tiles/{z}/{x}/{y}.png'
     L.tileLayer('./tiles/{z}/{x}/{y}.png', {
         attribution: 'Map data &copy; Your Local Source',
         maxZoom: 18,
@@ -72,12 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
         coordinatesList.innerHTML = '';
         fileInput.value = '';
         hexInput.value = '';
-        map.setView([20, 0], 2); // Reset map view
-        processedData = []; // Clear the data on map clear
+        map.setView([20, 0], 2);
+        processedData = [];
     }
 
     function processAndDisplayData(data) {
-        clearMap(); // Clear previous results before adding new ones
+        clearMap();
 
         if (data.error) {
             resultsDiv.textContent = `Error: ${data.error}`;
@@ -91,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        processedData = data; // Store the data
+        processedData = data;
 
         const signalTypes = {};
         data.forEach(point => {
@@ -143,8 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             coordinatesList.appendChild(li);
         });
     }
-
-    // --- New Function to Export to CSV ---
+    
     function exportToCsv() {
         if (processedData.length === 0) {
             alert('No data to export.');
@@ -160,11 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         for (const type in signalTypes) {
-            const points = signalTypes[type];
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Latitude,Longitude\n"; // CSV Header
+            csvContent += "Latitude,Longitude\n";
 
-            points.forEach(point => {
+            signalTypes[type].forEach(point => {
                 const row = `${point.lat},${point.lng}`;
                 csvContent += row + "\n";
             });
@@ -232,4 +229,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     clearBtn.addEventListener('click', clearMap);
     exportCsvBtn.addEventListener('click', exportToCsv);
+
+    // --- REVISED Event Listener for the Home Link ---
+    homeLink.addEventListener('click', (event) => {
+        event.preventDefault(); // Stop the link from actually navigating
+
+        // 1. Hide the main content and show the splash screen
+        if (mainContainer) mainContainer.classList.add('content-hidden');
+        if (splashScreen) splashScreen.classList.remove('hidden');
+        
+        // 2. Animate the banner
+        if (runningBanner) {
+            runningBanner.classList.remove('hidden');
+            runningBanner.classList.add('animate-banner');
+
+            // Hide the banner again after its animation finishes (7 seconds)
+            setTimeout(() => {
+                runningBanner.classList.add('hidden');
+                runningBanner.classList.remove('animate-banner');
+            }, 7000); // This MUST match the animation duration in style.css
+        }
+
+        // 3. After the splash screen's duration, hide it and show the main content
+        setTimeout(() => {
+            if (splashScreen) splashScreen.classList.add('hidden');
+            if (mainContainer) mainContainer.classList.remove('content-hidden');
+        }, 2500); // Original splash screen time
+    });
 });
