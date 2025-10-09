@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Hidden Console Message ---
+    console.log(
+        "%c📡 GeoSignal Parser v1.0 Initialized 📡",
+        "color: #58a6ff; font-size: 16px; font-weight: bold;"
+    );
+    console.log("Ohhh so we are peeking under the hood, are we? Welcome, fellow signal enthusiast!");
+
     const splashScreen = document.getElementById('splash-screen');
     const mainContainer = document.querySelector('.container');
     const fileInput = document.getElementById('fileInput');
@@ -85,7 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (data.length === 0) {
-            resultsDiv.textContent = 'No valid coordinates found in the data.';
+            // --- Themed "No Results" Message ---
+            const noResultsMessages = [
+                "Scanned the data stream... it's empty. Spooky.",
+                "Signal lost. Nothing but static.",
+                "Are you sure there's data in there? We can't find it."
+            ];
+            const randomIndex = Math.floor(Math.random() * noResultsMessages.length);
+            resultsDiv.textContent = noResultsMessages[randomIndex];
             signalTypeSpan.textContent = 'None';
             return;
         }
@@ -177,7 +191,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function handleDataProcessing(url, body) {
-        resultsDiv.textContent = 'Processing...';
+        // --- Witty Loading Messages ---
+        const loadingMessages = [
+            "Triangulating signal position...",
+            "Asking the satellites nicely...",
+            "Reticulating splines...",
+            "Bending spacetime to find coordinates...",
+            "Don't worry, the bits are flowing...",
+            "Calibrating the flux capacitor..."
+        ];
+        const randomIndex = Math.floor(Math.random() * loadingMessages.length);
+        resultsDiv.textContent = loadingMessages[randomIndex];
         signalTypeSpan.textContent = 'Detecting...';
         loader.classList.remove('hidden');
 
