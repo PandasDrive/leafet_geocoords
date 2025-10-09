@@ -181,9 +181,10 @@ nav a:hover {
     margin: 2rem auto;
     padding: 2rem;
     /* Glassmorphism effect */
-    background: rgba(20, 20, 40, 0.6); /* Slightly darker, more purple tint */
+    background: rgba(20, 20, 40, 0.6); 
     border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    /* The animation is added here */
+    animation: glowing-border 6s ease-in-out infinite;
     backdrop-filter: blur(10px) saturate(120%);
     -webkit-backdrop-filter: blur(10px) saturate(120%);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -460,4 +461,16 @@ button:hover {
     100% {
         background-color: #4dff00;
     }   
+}
+
+@keyframes glowing-border {
+    0% {
+        box-shadow: 0 0 5px rgba(0, 191, 255, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(88, 166, 255, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 5px rgba(0, 191, 255, 0.4);
+    }
 }
