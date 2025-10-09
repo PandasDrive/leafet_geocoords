@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('help-modal');
     const helpText = document.getElementById('help-text');
     const closeButton = document.querySelector('.close-button');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    let processedData = []; // Variable to store the processed data
 
     const helpContent = {
         'help-file': 'Upload a .sff or .fbf file containing signal data. The file will be processed to extract and display geographical coordinates.',
@@ -71,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.value = '';
         hexInput.value = '';
         map.setView([20, 0], 2); // Reset map view
+        processedData = []; // Clear the data on map clear
     }
 
     function processAndDisplayData(data) {
@@ -87,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
             signalTypeSpan.textContent = 'None';
             return;
         }
+
+        processedData = data; // Store the data
 
         const signalTypes = {};
         data.forEach(point => {
@@ -137,6 +142,41 @@ document.addEventListener('DOMContentLoaded', () => {
             li.textContent = `Type: ${point.type}, Lat: ${point.lat.toFixed(5)}, Lng: ${point.lng.toFixed(5)}`;
             coordinatesList.appendChild(li);
         });
+    }
+
+    // --- New Function to Export to CSV ---
+    function exportToCsv() {
+        if (processedData.length === 0) {
+            alert('No data to export.');
+            return;
+        }
+
+        const signalTypes = {};
+        processedData.forEach(point => {
+            if (!signalTypes[point.type]) {
+                signalTypes[point.type] = [];
+            }
+            signalTypes[point.type].push(point);
+        });
+
+        for (const type in signalTypes) {
+            const points = signalTypes[type];
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Latitude,Longitude\n"; // CSV Header
+
+            points.forEach(point => {
+                const row = `${point.lat},${point.lng}`;
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `signal_${type}_data.csv`);
+            document.body.appendChild(link); 
+            link.click();
+            document.body.removeChild(link);
+        }
     }
 
     async function handleDataProcessing(url, body) {
@@ -191,4 +231,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     clearBtn.addEventListener('click', clearMap);
+    exportCsvBtn.addEventListener('click', exportToCsv);
 });
