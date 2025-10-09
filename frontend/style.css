@@ -474,3 +474,40 @@ button:hover {
         box-shadow: 0 0 5px rgba(0, 191, 255, 0.4);
     }
 }
+/* --- New Animations --- */
+
+/* Konami Code Rocket */
+.konami-rocket {
+    position: fixed;
+    bottom: -100px; /* Start below the screen */
+    left: 5%;
+    font-size: 80px;
+    z-index: 10001; /* Make sure it's on top of everything */
+    pointer-events: none; /* So it doesn't interfere with clicks */
+    animation: rocket-fly 4s ease-in forwards;
+}
+
+@keyframes rocket-fly {
+    0% {
+        transform: translateY(0) rotate(-45deg);
+        opacity: 0;
+    }
+    25% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-120vh) translateX(100vw) rotate(45deg);
+        opacity: 0.5;
+    }
+}
+
+/* Help Icon Wiggle on hover */
+.help-icon:hover {
+    animation: wiggle 0.5s;
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-20deg); }
+    75% { transform: rotate(20deg); }
+}

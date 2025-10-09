@@ -1,10 +1,47 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Hidden Console Message ---
     console.log(
-        "%c📡 GeoSignal Parser v1.0 Initialized 📡",
+        "%c GeoSignal Parser v1.0 Initialized - Happy Hacking! ",
         "color: #58a6ff; font-size: 16px; font-weight: bold;"
     );
     console.log("Ohhh so we are peeking under the hood, are we? Welcome, fellow signal enthusiast!");
+
+        // --- Konami Code Logic ---
+    const konamiCode = [
+        'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+        'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+        'b', 'a'
+    ];
+    let konamiIndex = 0;
+
+    document.addEventListener('keyup', (event) => {
+        if (event.key === konamiCode[konamiIndex]) {
+            konamiIndex++;
+            if (konamiIndex === konamiCode.length) {
+                konamiIndex = 0; // Reset for next time
+                launchRocket();
+            }
+        } else {
+            konamiIndex = 0; // Reset if the sequence is broken
+        }
+    });
+
+    function launchRocket() {
+        // Prevent launching multiple rockets at once
+        if (document.querySelector('.konami-rocket')) {
+            return;
+        }
+        const rocket = document.createElement('div');
+        rocket.textContent = '🚀';
+        rocket.className = 'konami-rocket';
+        document.body.appendChild(rocket);
+
+        // Clean up the rocket from the DOM after the animation is done
+        setTimeout(() => {
+            rocket.remove();
+        }, 4000); // Duration matches the animation in style.css
+    }
+    // --- Element References ---
 
     const splashScreen = document.getElementById('splash-screen');
     const mainContainer = document.querySelector('.container');
