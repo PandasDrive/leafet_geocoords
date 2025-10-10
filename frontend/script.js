@@ -61,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Remove the effect after the animation finishes
-        // Increased timeout to 4000ms (4 seconds)
         setTimeout(() => {
             if(godModeText) {
                 godModeText.classList.add('hidden');
@@ -70,16 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
             elementsToGlow.forEach(el => {
                 el.classList.remove('god-mode-glow');
             });
-        }, 4000); // This now matches the new animation duration
+        }, 4000); 
     }
 
     // --- Dynamic Title variables ---
     const originalTitle = document.title;
     let titleTimeout;
 
-
     // --- Element References ---
-
     const splashScreen = document.getElementById('splash-screen');
     const mainContainer = document.querySelector('.container');
     const fileInput = document.getElementById('fileInput');
@@ -95,11 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const helpText = document.getElementById('help-text');
     const closeButton = document.querySelector('.close-button');
     const exportCsvBtn = document.getElementById('exportCsvBtn');
-    let processedData = [];
-
-    // --- Elements for the Home link feature ---
     const homeLink = document.getElementById('homeLink');
     const runningBanner = document.getElementById('running-banner');
+    const filterContainer = document.getElementById('filter-container');
+    const filterCheckboxes = document.getElementById('filter-checkboxes');
+    
+    let processedData = [];
+    let layerGroups = {};
 
     const helpContent = {
         'help-file': 'Upload a .sff or .fbf file containing signal data. The file will be processed to extract and display geographical coordinates.',
@@ -141,19 +140,63 @@ document.addEventListener('DOMContentLoaded', () => {
         maxZoom: 18,
     }).addTo(map);
 
-    let plottedLayers = [];
-
     // --- UI Functions ---
     function clearMap() {
-        plottedLayers.forEach(layer => map.removeLayer(layer));
-        plottedLayers = [];
+        for (const type in layerGroups) {
+            layerGroups[type].forEach(layer => map.removeLayer(layer));
+        }
+        layerGroups = {};
+        
         resultsDiv.textContent = 'No data processed yet.';
         signalTypeSpan.textContent = 'N/A';
         coordinatesList.innerHTML = '';
         fileInput.value = '';
         hexInput.value = '';
+        
+        filterContainer.classList.add('hidden');
+        filterCheckboxes.innerHTML = '';
+        
         map.setView([20, 0], 2);
         processedData = [];
+        clearTimeout(titleTimeout);
+        document.title = originalTitle;
+    }
+
+    function createFilters(signalTypes) {
+        filterCheckboxes.innerHTML = '';
+        const types = Object.keys(signalTypes);
+
+        if (types.length > 1) {
+            types.forEach(type => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'filter-option';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `filter-${type}`;
+                checkbox.value = type;
+                checkbox.checked = true;
+
+                checkbox.addEventListener('change', (event) => {
+                    const signalType = event.target.value;
+                    const layers = layerGroups[signalType] || [];
+                    if (event.target.checked) {
+                        layers.forEach(layer => layer.addTo(map));
+                    } else {
+                        layers.forEach(layer => map.removeLayer(layer));
+                    }
+                });
+
+                const label = document.createElement('label');
+                label.htmlFor = `filter-${type}`;
+                label.textContent = `Signal ${type}`;
+
+                optionDiv.appendChild(checkbox);
+                optionDiv.appendChild(label);
+                filterCheckboxes.appendChild(optionDiv);
+            });
+            filterContainer.classList.remove('hidden');
+        }
     }
 
     function processAndDisplayData(data) {
@@ -162,11 +205,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.error) {
             resultsDiv.textContent = `Error: ${data.error}`;
             signalTypeSpan.textContent = 'Error';
+            document.title = '❌ Error!';
+            titleTimeout = setTimeout(() => { document.title = originalTitle; }, 4000);
             return;
         }
 
         if (data.length === 0) {
-            // --- Themed "No Results" Message ---
             const noResultsMessages = [
                 "Scanned the data stream... it's empty. Spooky.",
                 "Signal lost. Nothing but static.",
@@ -175,8 +219,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const randomIndex = Math.floor(Math.random() * noResultsMessages.length);
             resultsDiv.textContent = noResultsMessages[randomIndex];
             signalTypeSpan.textContent = 'None';
+            document.title = '🤷 No Signals Found';
+            titleTimeout = setTimeout(() => { document.title = originalTitle; }, 4000);
             return;
         }
+
+        document.title = '✅ Signals Found!';
+        titleTimeout = setTimeout(() => { document.title = originalTitle; }, 4000);
 
         processedData = data;
 
@@ -188,6 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
             signalTypes[point.type].push(point);
         });
 
+        createFilters(signalTypes);
+
         const detectedTypes = Object.keys(signalTypes);
         signalTypeSpan.textContent = detectedTypes.join(', ');
 
@@ -195,6 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const colors = { 'A': 'blue', 'B': 'red' };
 
         for (const type in signalTypes) {
+            layerGroups[type] = [];
             const points = signalTypes[type];
             if (points.length > 0) {
                 points.forEach(point => {
@@ -212,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     marker.bindTooltip(`Lat: ${point.lat.toFixed(5)}, Lng: ${point.lng.toFixed(5)}`);
                     marker.bindPopup(`<b>Signal ${type}</b><br>Lat: ${point.lat.toFixed(5)}<br>Lng: ${point.lng.toFixed(5)}`);
                     
-                    plottedLayers.push(marker);
+                    layerGroups[type].push(marker);
                 });
             }
         }
@@ -265,7 +317,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function handleDataProcessing(url, body) {
-        // --- Witty Loading Messages ---
+        clearTimeout(titleTimeout);
+        document.title = '🛰️ Finding Signals...';
+        
         const loadingMessages = [
             "Triangulating signal position...",
             "Asking the satellites nicely...",
@@ -297,6 +351,8 @@ document.addEventListener('DOMContentLoaded', () => {
             resultsDiv.textContent = `Error: ${error.message}`;
             signalTypeSpan.textContent = 'Error';
             console.error('Error processing data:', error);
+            document.title = '❌ Error!';
+            titleTimeout = setTimeout(() => { document.title = originalTitle; }, 4000);
         } finally {
             loader.classList.add('hidden');
         }
@@ -328,30 +384,22 @@ document.addEventListener('DOMContentLoaded', () => {
     clearBtn.addEventListener('click', clearMap);
     exportCsvBtn.addEventListener('click', exportToCsv);
 
-    // --- REVISED Event Listener for the Home Link ---
     homeLink.addEventListener('click', (event) => {
-        event.preventDefault(); // Stop the link from actually navigating
-
-        // 1. Hide the main content and show the splash screen
+        event.preventDefault(); 
         if (mainContainer) mainContainer.classList.add('content-hidden');
         if (splashScreen) splashScreen.classList.remove('hidden');
         
-        // 2. Animate the banner
         if (runningBanner) {
             runningBanner.classList.remove('hidden');
             runningBanner.classList.add('animate-banner');
-
-            // Hide the banner again after its animation finishes (7 seconds)
             setTimeout(() => {
                 runningBanner.classList.add('hidden');
                 runningBanner.classList.remove('animate-banner');
-            }, 7000); // This MUST match the animation duration in style.css
+            }, 7000);
         }
-
-        // 3. After the splash screen's duration, hide it and show the main content
         setTimeout(() => {
             if (splashScreen) splashScreen.classList.add('hidden');
             if (mainContainer) mainContainer.classList.remove('content-hidden');
-        }, 2500); // Original splash screen time
+        }, 2500);
     });
 });

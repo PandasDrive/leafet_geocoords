@@ -568,3 +568,40 @@ button:hover {
         transform: translate(-50%, -50%) scale(1);
     }
 }
+
+/* --- Filter Container Styles --- */
+#filter-container {
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    border: 1px solid #444;
+}
+
+#filter-container h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+#filter-checkboxes {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-option label {
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.filter-option input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
