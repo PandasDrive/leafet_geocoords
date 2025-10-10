@@ -96,6 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const runningBanner = document.getElementById('running-banner');
     const filterContainer = document.getElementById('filter-container');
     const filterCheckboxes = document.getElementById('filter-checkboxes');
+    const dashboardHeader = document.getElementById('dashboardHeader');
+    const toggleDashboardBtn = document.getElementById('toggleDashboardBtn');
+    const dashboardContent = document.getElementById('dashboardContent');
     
     let processedData = [];
     let layerGroups = {};
@@ -198,6 +201,101 @@ document.addEventListener('DOMContentLoaded', () => {
             filterContainer.classList.remove('hidden');
         }
     }
+        // Add variables for the charts
+    let signalTypeChart = null;
+    let latitudeChart = null;
+
+    // --- Charting Functions ---
+
+    function createSignalTypeChart(data) {
+        const ctx = document.getElementById('signalTypeChart').getContext('2d');
+        const signalCounts = data.reduce((acc, point) => {
+            acc[point.type] = (acc[point.type] || 0) + 1;
+            return acc;
+        }, {});
+
+        // Destroy the old chart if it exists
+        if (signalTypeChart) {
+            signalTypeChart.destroy();
+        }
+
+        signalTypeChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(signalCounts),
+                datasets: [{
+                    label: 'Signal Types',
+                    data: Object.values(signalCounts),
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)', // Blue for Signal A
+                        'rgba(255, 99, 132, 0.7)'  // Red for Signal B
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#e0e0e0' // Style legend text for dark mode
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function createLatitudeChart(data) {
+        const ctx = document.getElementById('latitudeChart').getContext('2d');
+        const latitudeBands = data.reduce((acc, point) => {
+            const band = Math.round(point.lat / 10) * 10; // Group by 10 degrees of latitude
+            acc[band] = (acc[band] || 0) + 1;
+            return acc;
+        }, {});
+
+        // Destroy the old chart if it exists
+        if (latitudeChart) {
+            latitudeChart.destroy();
+        }
+        
+        latitudeChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(latitudeBands).sort((a, b) => a - b),
+                datasets: [{
+                    label: 'Signal Count',
+                    data: Object.values(latitudeBands),
+                    backgroundColor: 'rgba(0, 191, 255, 0.6)',
+                    borderColor: 'rgba(0, 191, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#e0e0e0' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: '#e0e0e0' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
 
     function processAndDisplayData(data) {
         clearMap();
@@ -228,6 +326,10 @@ document.addEventListener('DOMContentLoaded', () => {
         titleTimeout = setTimeout(() => { document.title = originalTitle; }, 4000);
 
         processedData = data;
+
+        // Generate the charts with the new data
+        createSignalTypeChart(data);
+        createLatitudeChart(data);
 
         const signalTypes = {};
         data.forEach(point => {
@@ -383,6 +485,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     clearBtn.addEventListener('click', clearMap);
     exportCsvBtn.addEventListener('click', exportToCsv);
+
+    if (dashboardHeader) {
+        dashboardHeader.addEventListener('click', () => {
+            dashboardContent.classList.toggle('collapsed');
+            const isCollapsed = dashboardContent.classList.contains('collapsed');
+            toggleDashboardBtn.textContent = isCollapsed ? 'Show' : 'Hide';
+            toggleDashboardBtn.title = isCollapsed ? 'Show Dashboard' : 'Collapse Dashboard';
+        });
+    }
 
     homeLink.addEventListener('click', (event) => {
         event.preventDefault(); 
