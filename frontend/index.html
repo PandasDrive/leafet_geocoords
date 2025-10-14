@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
     <div id="god-mode-text" class="hidden"> God Mode: Wow aren't we knowledgeable in console cheats! </div>
@@ -40,11 +41,13 @@
 
     <div class="container content-hidden">
         <header>
-            <nav>
-                <a href="/" id="homeLink"> Home </a>
-                <a href="/about">About</a>
-                <a href="/faq">FAQ</a>
-            </nav>
+            <div class="nav-container">
+                <nav class="cool-nav">
+                    <a href="/" id="homeLink" class="nav-link"><span>Home</span><div class="nav-item-glow"></div></a>
+                    <a href="/about" class="nav-link"><span>About</span><div class="nav-item-glow"></div></a>
+                    <a href="/faq" class="nav-link"><span>FAQ</span><div class="nav-item-glow"></div></a>
+                </nav>
+            </div>
         </header>
         <h1>GeoSignal Parser</h1>
 
@@ -95,6 +98,21 @@
             <div id="coordinates-list-container">
                 <h3>Coordinates:</h3>
                 <ul id="coordinates-list"></ul>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <div class="dashboard-header" id="3dDashboardHeader">
+                <h2>3D Signal View</h2>
+                <button id="toggle3dDashboardBtn" title="Collapse 3D View">Hide</button>
+            </div>
+            <div id="3dDashboardContent">
+                <div id="3d-plot-container"></div>
+                <div class="controls" id="3d-controls">
+                    <button id="3d-top-view">Top View</button>
+                    <button id="3d-side-view">Side View</button>
+                    <button id="3d-iso-view">Iso View</button>
+                </div>
             </div>
         </div>
 
